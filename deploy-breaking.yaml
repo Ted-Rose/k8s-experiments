@@ -1,0 +1,44 @@
+---
+# This deployment update will fail during rollout.
+#
+# Math:
+#   Current usage:  3 pods * 50Mi = 150Mi
+#   Namespace quota: 200Mi  (50Mi headroom)
+#
+#   During a rolling update, Kubernetes (maxSurge=25% → 1 extra pod)
+#   will try to create 1 new pod before terminating any old one:
+#     150Mi (existing) + 60Mi (new pod) = 210Mi  >  200Mi quota
+#
+# Result: ReplicaSet controller emits FailedCreate with:
+#   "exceeded quota: mem-quota, requested: requests.memory=60Mi,
+#    used: requests.memory=150Mi, limited: requests.memory=200Mi"
+#
+# Verify with:
+#   kubectl get deployments -n quota-demo
+#   kubectl describe rs -n quota-demo | grep -i "failed\|forbidden"
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v1
+  namespace: quota-demo
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%      # default — Kubernetes will surge 1 extra pod
+      maxUnavailable: 0  # no pod taken down until new one is Ready
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        resources:
+          requests:
+            memory: "60Mi" # 60Mi * 1 surge pod + 150Mi existing = 210Mi > 200Mi quota → FORBIDDEN

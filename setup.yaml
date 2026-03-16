@@ -1,0 +1,36 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quota-demo
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: mem-quota
+  namespace: quota-demo
+spec:
+  hard:
+    requests.memory: 200Mi # Total limit for the namespace
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-v1
+  namespace: quota-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: demo
+  template:
+    metadata:
+      labels:
+        app: demo
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:alpine
+        resources:
+          requests:
+            memory: "50Mi" # 3 replicas * 50Mi = 150Mi used (50Mi remaining)
