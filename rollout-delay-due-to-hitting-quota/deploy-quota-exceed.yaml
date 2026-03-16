@@ -11,7 +11,8 @@ metadata:
   namespace: quota-demo
 spec:
   hard:
-    requests.memory: 200Mi # Total limit for the namespace
+    # Not enough to surge 2 pods with 52Mi during rolling update
+    requests.memory: 500Mi
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -19,7 +20,12 @@ metadata:
   name: app-v1
   namespace: quota-demo
 spec:
-  replicas: 3
+  replicas: 8
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%      # default — Kubernetes instructed to surge 2 extra pods during rolling update
+      maxUnavailable: 0  # no pod taken down until new one is Ready
   selector:
     matchLabels:
       app: demo
@@ -33,4 +39,4 @@ spec:
         image: nginx:alpine
         resources:
           requests:
-            memory: "50Mi" # 3 replicas * 50Mi = 150Mi used (50Mi remaining)
+            memory: "52Mi" # 8 replicas * 52Mi = 416Mi used (84Mi remaining - not enough for 2 surge pods)
