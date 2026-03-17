@@ -5,7 +5,7 @@ when the namespace `ResourceQuota` leaves insufficient headroom for the surge po
 
 ## Experiment
 
-### Step 0: Clean up previous experiment cluster
+### Step 0: Clean up previous experiment cluster (if any)
 
 ```bash
 kind delete cluster --name quota-test
@@ -81,21 +81,18 @@ kubectl describe rs -n quota-demo | grep -A2 -i "failed\|forbidden"
 
 ## Findings
 
-The rollout did not fail — it completed, but took over 3 hours instead of seconds.
+The rollout did not fail — it completed, but significantly slowed down.
 
-The root cause is the ReplicaSet controller's exponential backoff. When a surge pod
-is rejected by the quota (`FORBIDDEN`), the controller backs off before retrying.
+The root cause is that deployment always stubbornly attempts to create 25% of ReplicaSet pods - always ignoring namespace quota. After pod creation fails the ReplicaSet controller exponentially increases the backoff for retries eventually reaching maximum delay of around 17 minutes. Afterwards every next rollout of 25% of pods is retried every 17 minutes - always one pod creation succeeds and the second fails.
+
 The default backoff parameters (defined in [client-go/util/workqueue/default_rate_limiters.go](https://github.com/kubernetes/client-go/blob/master/util/workqueue/default_rate_limiters.go)) are:
 
 | Parameter | Value |
 |---|---|
 | Base delay | 5ms |
-| Max delay | 1000s (~16 min) |
+| Max delay | 1000s (~17 min) |
 | Factor | 2 (doubles each retry) |
 
-After a few `FailedCreate` errors the retry interval hits the 16-minute cap. Even
-though quota frees up as soon as an old pod terminates, the controller is still
-waiting out its backoff timer and does not retry immediately. This turns a
-one-pod-at-a-time rollout into a multi-hour crawl.
-
 This is a known issue: [kubernetes/kubernetes#98656](https://github.com/kubernetes/kubernetes/issues/98656).
+
+> **Note:**  The behavior could vary between different k8s types such as GCP, AWS or AKS.
