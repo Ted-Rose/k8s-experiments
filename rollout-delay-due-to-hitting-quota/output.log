@@ -1,0 +1,121 @@
+kubectl get events -n quota-demo --sort-by='.lastTimestamp'
+LAST SEEN   TYPE      REASON              OBJECT                         MESSAGE
+45m         Normal    Scheduled           pod/app-v1-679646dd78-45xg6    Successfully assigned quota-demo/app-v1-679646dd78-45xg6 to quota-test-control-plane
+45m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-679646dd78 from 0 to 8
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-hp995
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-qwq8s
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-n5h9r
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-45xg6
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-nqhx5
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-vg55h
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-gp5kp
+45m         Normal    SuccessfulCreate    replicaset/app-v1-679646dd78   Created pod: app-v1-679646dd78-qlsks
+45m         Normal    Scheduled           pod/app-v1-679646dd78-vg55h    Successfully assigned quota-demo/app-v1-679646dd78-vg55h to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-qwq8s    Successfully assigned quota-demo/app-v1-679646dd78-qwq8s to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-qlsks    Successfully assigned quota-demo/app-v1-679646dd78-qlsks to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-nqhx5    Successfully assigned quota-demo/app-v1-679646dd78-nqhx5 to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-n5h9r    Successfully assigned quota-demo/app-v1-679646dd78-n5h9r to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-hp995    Successfully assigned quota-demo/app-v1-679646dd78-hp995 to quota-test-control-plane
+45m         Normal    Scheduled           pod/app-v1-679646dd78-gp5kp    Successfully assigned quota-demo/app-v1-679646dd78-gp5kp to quota-test-control-plane
+45m         Normal    Pulled              pod/app-v1-679646dd78-vg55h    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Created             pod/app-v1-679646dd78-gp5kp    Container created
+45m         Normal    Started             pod/app-v1-679646dd78-n5h9r    Container started
+45m         Normal    Created             pod/app-v1-679646dd78-n5h9r    Container created
+45m         Normal    Pulled              pod/app-v1-679646dd78-n5h9r    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Created             pod/app-v1-679646dd78-nqhx5    Container created
+45m         Normal    Started             pod/app-v1-679646dd78-nqhx5    Container started
+45m         Normal    Started             pod/app-v1-679646dd78-hp995    Container started
+45m         Normal    Created             pod/app-v1-679646dd78-hp995    Container created
+45m         Normal    Pulled              pod/app-v1-679646dd78-hp995    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Pulled              pod/app-v1-679646dd78-qlsks    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Started             pod/app-v1-679646dd78-gp5kp    Container started
+45m         Normal    Pulled              pod/app-v1-679646dd78-nqhx5    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Pulled              pod/app-v1-679646dd78-gp5kp    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Created             pod/app-v1-679646dd78-qlsks    Container created
+45m         Normal    Started             pod/app-v1-679646dd78-45xg6    Container started
+45m         Normal    Created             pod/app-v1-679646dd78-45xg6    Container created
+45m         Normal    Pulled              pod/app-v1-679646dd78-45xg6    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Started             pod/app-v1-679646dd78-vg55h    Container started
+45m         Normal    Created             pod/app-v1-679646dd78-vg55h    Container created
+45m         Normal    Started             pod/app-v1-679646dd78-qwq8s    Container started
+45m         Normal    Created             pod/app-v1-679646dd78-qwq8s    Container created
+45m         Normal    Pulled              pod/app-v1-679646dd78-qwq8s    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+45m         Normal    Started             pod/app-v1-679646dd78-qlsks    Container started
+
+# Starting to deploy `deploy-quota-exceed.yaml`
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-hrtcr" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Normal    Created             pod/app-v1-55c48866d6-mkrn7    Container created
+
+# Successfully only 1 pod created due to hitting memory quota limit
+44m         Normal    SuccessfulCreate    replicaset/app-v1-55c48866d6   Created pod: app-v1-55c48866d6-mkrn7
+
+# Replica set's desired pod count is set from 0 to 2, but only 1 pod is created successfully.
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 0 to 2
+44m         Normal    Pulled              pod/app-v1-55c48866d6-mkrn7    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+44m         Normal    Scheduled           pod/app-v1-55c48866d6-mkrn7    Successfully assigned quota-demo/app-v1-55c48866d6-mkrn7 to quota-test-control-plane
+
+# The deployment stubbornly tries to create more pods, but fails. Each failure increases deployment backoff time - deployment will wait longer before next retry.
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-vkdxj" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-57m9h" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-pxxbl" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-52g8b" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-dkk5b" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-r88g5" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled down replica set app-v1-679646dd78 from 8 to 7
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-r6m2k" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-ttp6x" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=452Mi, limited: requests.memory=500Mi
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 2 to 3
+44m         Normal    SuccessfulDelete    replicaset/app-v1-679646dd78   Deleted pod: app-v1-679646dd78-n5h9r
+44m         Normal    Started             pod/app-v1-55c48866d6-mkrn7    Container started
+44m         Normal    Killing             pod/app-v1-679646dd78-n5h9r    Stopping container nginx
+44m         Normal    Created             pod/app-v1-55c48866d6-dw7mk    Container created
+44m         Normal    Started             pod/app-v1-55c48866d6-dw7mk    Container started
+44m         Normal    Pulled              pod/app-v1-55c48866d6-dw7mk    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+44m         Normal    Scheduled           pod/app-v1-55c48866d6-dw7mk    Successfully assigned quota-demo/app-v1-55c48866d6-dw7mk to quota-test-control-plane
+
+# After the first old pod is deleted, there is enough memory quota to create another new pod for the new replicaset
+44m         Normal    SuccessfulCreate    replicaset/app-v1-55c48866d6   Created pod: app-v1-55c48866d6-dw7mk
+44m         Normal    SuccessfulDelete    replicaset/app-v1-679646dd78   Deleted pod: app-v1-679646dd78-45xg6
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 3 to 4
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled down replica set app-v1-679646dd78 from 7 to 6
+44m         Normal    Killing             pod/app-v1-679646dd78-45xg6    Stopping container nginx
+44m         Normal    Started             pod/app-v1-55c48866d6-g2k54    Container started
+
+# Third pod created
+44m         Normal    SuccessfulCreate    replicaset/app-v1-55c48866d6   Created pod: app-v1-55c48866d6-g2k54
+44m         Normal    Scheduled           pod/app-v1-55c48866d6-g2k54    Successfully assigned quota-demo/app-v1-55c48866d6-g2k54 to quota-test-control-plane
+44m         Normal    Created             pod/app-v1-55c48866d6-g2k54    Container created
+44m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   (combined from similar events): Error creating: pods "app-v1-55c48866d6-btmx5" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=456Mi, limited: requests.memory=500Mi
+44m         Normal    Pulled              pod/app-v1-55c48866d6-g2k54    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+44m         Normal    SuccessfulDelete    replicaset/app-v1-679646dd78   Deleted pod: app-v1-679646dd78-qwq8s
+44m         Normal    Killing             pod/app-v1-679646dd78-qwq8s    Stopping container nginx
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled down replica set app-v1-679646dd78 from 6 to 5
+44m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 4 to 5
+27m         Normal    Pulled              pod/app-v1-55c48866d6-brh5b    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+27m         Normal    Killing             pod/app-v1-679646dd78-hp995    Stopping container nginx
+27m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-fljqr" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=458Mi, limited: requests.memory=500Mi
+27m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-nv6sr" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=458Mi, limited: requests.memory=500Mi
+27m         Normal    Scheduled           pod/app-v1-55c48866d6-brh5b    Successfully assigned quota-demo/app-v1-55c48866d6-brh5b to quota-test-control-plane
+27m         Normal    Started             pod/app-v1-55c48866d6-brh5b    Container started
+27m         Normal    Created             pod/app-v1-55c48866d6-brh5b    Container created
+
+# Forth pod creation is attempted and succeeded 17 minutes after the last successful pod creation
+27m         Normal    SuccessfulCreate    replicaset/app-v1-55c48866d6   Created pod: app-v1-55c48866d6-brh5b
+27m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 5 to 6
+27m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled down replica set app-v1-679646dd78 from 5 to 4
+27m         Normal    SuccessfulDelete    replicaset/app-v1-679646dd78   Deleted pod: app-v1-679646dd78-hp995
+27m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-99zrm" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=458Mi, limited: requests.memory=500Mi
+10m         Normal    SuccessfulDelete    replicaset/app-v1-679646dd78   Deleted pod: app-v1-679646dd78-qlsks
+10m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-px468" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=460Mi, limited: requests.memory=500Mi
+10m         Normal    Killing             pod/app-v1-679646dd78-qlsks    Stopping container nginx
+10m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-729zc" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=460Mi, limited: requests.memory=500Mi
+10m         Normal    Started             pod/app-v1-55c48866d6-h6jnd    Container started
+10m         Normal    Scheduled           pod/app-v1-55c48866d6-h6jnd    Successfully assigned quota-demo/app-v1-55c48866d6-h6jnd to quota-test-control-plane
+10m         Normal    Pulled              pod/app-v1-55c48866d6-h6jnd    Container image "nginx:alpine" already present on machine and can be accessed by the pod
+10m         Normal    Created             pod/app-v1-55c48866d6-h6jnd    Container created
+10m         Warning   FailedCreate        replicaset/app-v1-55c48866d6   Error creating: pods "app-v1-55c48866d6-sgsjt" is forbidden: exceeded quota: mem-quota, requested: requests.memory=52Mi, used: requests.memory=460Mi, limited: requests.memory=500Mi
+
+# Fifth pod creation again is attempted and succeeded 17 minutes after the last successful pod creation
+10m         Normal    SuccessfulCreate    replicaset/app-v1-55c48866d6   Created pod: app-v1-55c48866d6-h6jnd
+10m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled down replica set app-v1-679646dd78 from 4 to 3
+10m         Normal    ScalingReplicaSet   deployment/app-v1              Scaled up replica set app-v1-55c48866d6 from 6 to 7
