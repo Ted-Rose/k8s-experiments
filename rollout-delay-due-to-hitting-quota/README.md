@@ -81,7 +81,7 @@ kubectl describe rs -n quota-demo | grep -A2 -i "failed\|forbidden"
 
 ## Findings
 
-The rollout did not fail — it completed, but significantly slowed down.
+The rollout did not fail — it completed, but significantly slowed down. See results in `output.log`.
 
 The root cause is that deployment always stubbornly attempts to create 25% of ReplicaSet pods - always ignoring namespace quota. After pod creation fails the ReplicaSet controller exponentially increases the backoff for retries eventually reaching maximum delay of around 17 minutes. Afterwards every next rollout of 25% of pods is retried every 17 minutes - always one pod creation succeeds and the second fails.
 
